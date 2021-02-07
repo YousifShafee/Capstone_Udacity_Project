@@ -16,9 +16,9 @@ class CapstoneTestCase(unittest.TestCase):
         self.database_path = database_path
         setup_db(self.app, self.database_path)
         # JWT from environment variable
-        self.user_jwt = {'Authorization': 'Bearer {}'.format(os.environ['user_token'])}
-        self.author_jwt = {'Authorization': 'Bearer {}'.format(os.environ['author_token'])}
-        self.invalid_token = {'Authorization': 'Bearer {}'.format(os.environ['invalid_token'])}
+        self.user_jwt = {'Authorization': 'Bearer {}'.format(os.environ['USER_TOKEN'])}
+        self.author_jwt = {'Authorization': 'Bearer {}'.format(os.environ['AUTHOR_TOKEN'])}
+        self.invalid_token = {'Authorization': 'Bearer {}'.format(os.environ['INVALID_TOKEN'])}
 
         # binds the app to the current context
         with self.app.app_context():
