@@ -1,7 +1,18 @@
 import json
 import os
-from flask import Flask, jsonify, request, abort
-from models import setup_db, Book, User, Author
+import sys
+from flask import (
+  Flask,
+  request,
+  jsonify,
+  abort
+)
+from models import (
+    setup_db,
+    Book,
+    User,
+    Author
+)
 from flask_cors import CORS
 from auth import AuthError, requires_auth
 
@@ -24,7 +35,7 @@ def create_app(test_config=None):
             data = Book.query.order_by('id').all()
             return jsonify({'books': data_format(data)})
         except:
-            abort(422)
+            abort(422, sys.exc_info()[0].__name__)
 
     @app.route('/author', methods=['GET'])
     def get_author():
@@ -32,7 +43,7 @@ def create_app(test_config=None):
             data = Author.query.order_by('id').all()
             return jsonify({'authors': data_format(data)})
         except:
-            abort(422)
+            abort(422, sys.exc_info()[0].__name__)
 
     @app.route('/user', methods=['GET'])
     @requires_auth('get:user')
@@ -41,7 +52,7 @@ def create_app(test_config=None):
             data = User.query.order_by('id').all()
             return jsonify({'users': data_format(data)})
         except:
-            abort(422)
+            abort(422, sys.exc_info()[0].__name__)
 
     @app.route('/user/<int:user_id>', methods=['GET'])
     @requires_auth('get:user')
@@ -65,7 +76,7 @@ def create_app(test_config=None):
             author.insert()
             return jsonify({"author": author.format()})
         except:
-            abort(422)
+            abort(422, sys.exc_info()[0].__name__)
 
     @app.route('/book/create', methods=['POST'])
     @requires_auth('create:book')
@@ -75,14 +86,16 @@ def create_app(test_config=None):
         pages = body['pages']
         try:
             author_id = body['author']
-        except:
+        except KeyError:
             raise AuthError({"error": "invalid_request", "description": "There is missing author in request"}, 400)
+        except:
+            abort(422)
         try:
             book = Book(name=name, pages=pages, author=author_id, reader=[])
             book.insert()
             return jsonify({"book": book.format()})
         except:
-            abort(422)
+            abort(422, sys.exc_info()[0].__name__)
 
     @app.route('/user/create', methods=['POST'])
     @requires_auth('create:user')
@@ -99,18 +112,18 @@ def create_app(test_config=None):
             user.insert()
             return jsonify({"user": user.format()})
         except:
-            abort(422)
+            abort(422, sys.exc_info()[0].__name__)
 
     @app.route('/user/<int:user_id>/book_read', methods=['PATCH'])
     @requires_auth('create:user')
-    def follow_author(payload, user_id):
+    def read_book(payload, user_id):
         try:
             body = json.loads(request.get_data())
             book_read = body['book_read']
             # get read books by this user
             book = [Book.query.get(book) for book in book_read]
             user = User.query.get(user_id)
-        except:
+        except TypeError:
             abort(400)
         try:
             # to remove duplicated books join new list with current list in set
@@ -119,7 +132,7 @@ def create_app(test_config=None):
             user.update()
             return jsonify({"user": user.format()})
         except:
-            abort(422)
+            abort(422, sys.exc_info()[0].__name__)
 
     @app.route('/user/<int:user_id>/delete', methods=['DELETE'])
     @requires_auth('create:user')
@@ -168,7 +181,7 @@ def page_not_found(error):
 def not_allowed(error):
     return jsonify({
         "success": False,
-        "description": "Method Not Allowed, Please change methos",
+        "description": "Method Not Allowed, Please change method",
         "error": 405
     }), 405
 
@@ -178,7 +191,7 @@ def un_processable(error):
     return jsonify({
         "success": False,
         "error": 422,
-        "message": "UnProcessable, Please try again"
+        "message": "Un Processable, It has a/an {}".format(error.description)
     }), 422
 
 

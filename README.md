@@ -24,7 +24,7 @@ Python3, pip should be installed on local machine.
 
 From the root folder run requirements.txt.
 
-    pip install -r requirements.txt
+    pip3 install -r requirements.txt
 
 #### Database Setup
 Database is hosted live via Heroku

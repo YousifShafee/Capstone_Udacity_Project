@@ -93,5 +93,7 @@ def requires_auth(permission=''):
                 raise AuthError({'message': 'The Token was not verified'}, 401)
             check_permissions(permission, payload)
             return f('payload', *args, **kwargs)
+
         return wrapper
+
     return requires_auth_decorator

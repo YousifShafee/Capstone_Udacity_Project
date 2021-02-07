@@ -1,6 +1,5 @@
-from sqlalchemy import Column, String, create_engine
+from sqlalchemy import Column
 from flask_sqlalchemy import SQLAlchemy
-import json
 import os
 
 database_path = os.environ['DATABASE_URL']
@@ -21,17 +20,27 @@ def setup_db(app, database_path=database_path):
     db.create_all()
 
 
-'''
-Person
-Have title and release year
-'''
+class InheritedMethods(db.Model):
+    __abstract__ = True
+
+    def insert(self):
+        db.session.add(self)
+        db.session.commit()
+
+    def update(self):
+        db.session.commit()
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+
 
 read = db.Table('read',
                 db.Column('book_id', db.Integer, db.ForeignKey('book.id'), primary_key=True),
                 db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True))
 
 
-class User(db.Model):
+class User(InheritedMethods):
     __tablename__ = 'user'
     id = Column(db.Integer, primary_key=True)
     name = Column(db.String)
@@ -51,19 +60,8 @@ class User(db.Model):
             'book_read': [book.id for book in self.book_read]
         }
 
-    def insert(self):
-        db.session.add(self)
-        db.session.commit()
 
-    def update(self):
-        db.session.commit()
-
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
-
-
-class Book(db.Model):
+class Book(InheritedMethods):
     __tablename__ = 'book'
     id = Column(db.Integer, primary_key=True)
     name = Column(db.String)
@@ -86,13 +84,6 @@ class Book(db.Model):
             'reader': [book.id for book in self.reader]
         }
 
-    def insert(self):
-        db.session.add(self)
-        db.session.commit()
-
-    def update(self):
-        db.session.commit()
-
     def delete(self):
         self.reader = []
         db.session.commit()
@@ -100,7 +91,7 @@ class Book(db.Model):
         db.session.commit()
 
 
-class Author(db.Model):
+class Author(InheritedMethods):
     __tablename__ = 'author'
     id = Column(db.Integer, primary_key=True)
     name = Column(db.String)
@@ -116,14 +107,3 @@ class Author(db.Model):
             'name': self.name,
             'books': [book.format()['id'] for book in self.books]
         }
-
-    def insert(self):
-        db.session.add(self)
-        db.session.commit()
-
-    def update(self):
-        db.session.commit()
-
-    def delete(self):
-        db.session.delete(self)
-        db.session.commit()
