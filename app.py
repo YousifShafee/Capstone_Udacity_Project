@@ -1,8 +1,11 @@
 import json
+import os
 from flask import Flask, jsonify, request, abort
 from models import setup_db, Book, User, Author
 from flask_cors import CORS
 from auth import AuthError, requires_auth
+
+database_path = os.environ['DATABASE_URL']
 
 
 def data_format(data):
@@ -11,8 +14,9 @@ def data_format(data):
 
 def create_app(test_config=None):
     app = Flask(__name__)
-    setup_db(app)
+    setup_db(app, database_path)
     CORS(app)
+    print("API Connected ...")
 
     @app.route('/book', methods=['GET'])
     def get_books():
