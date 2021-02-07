@@ -135,199 +135,241 @@ Application has following end points.
 
 ##### GET /book
 
-    1. Its public get a list of books without authorization.
+     Its public which get a list of books without authorization.
+     data:
+        Book id,
+        list of Author id who write this Book,
+        name of book,
+        number of book pages
+        Users id Who mark this Book as read
+        
 
 ###### Sample
 
       curl https://capstoneudacityproject.herokuapp.com/book
 
       {
-        "movies":
-          [
+        "books": [
             {
-              "id":1,
-              "release_date":"Wed, 22 May 2019 00:00:00 GMT",
-              "title":"Movie1"
+                "author": 2,
+                "id": 3,
+                "name": "War Is Close",
+                "pages": 200,
+                "reader": [4]
             },
             {
-              "id":2,
-              "release_date":"Wed, 22 May 2019 00:00:00 GMT",
-              "title":"Movie1"
-            },
-            {
-              "id":3,
-              "release_date":"Wed, 22 May 2019 00:00:00 GMT",
-              "title":"Movie2"
-            },
-            {
-              "id":4,
-              "release_date":"Wed, 22 May 2019 00:00:00 GMT",
-              "title":"Movie1"
-            },
-            {
-              "id":5,
-              "release_date":"Wed, 22 May 2019 00:00:00 GMT",
-              "title":"Movie1"
-            },
-            {{
-              "id":6,
-              "release_date":"Wed, 22 May 2019 00:00:00 GMT",
-              "title":"Movie1"
-            },
-            {
-              "id":7,
-              "release_date":"Wed, 22 May 2019 00:00:00 GMT",
-              "title":"Movie1"
-            },
-            {
-              "id":8,
-              "release_date":"Wed, 22 May 2019 00:00:00 GMT",
-              "title":"Movie1"
-            }
-          ],
-        "success":true,
-        "total_movies":8
+                "author": 3,
+                "id": 4,
+                "name": "The Love",
+                "pages": 200,
+                "reader": []
+            }]
       }
 
-##### DELETE /movies/{movie_id}
+##### GET /author
 
-      1. Deletes a movie of the given id.
-      2. Returns the success value.
+      Its public which get a list of Authors without authorization.
+      data:
+        Author id,
+        Author name,
+        list of Books id authored by him
+        
 
 ###### Sample
 
-      curl -H "Authorization: Bearer ${auth_token_cast_asst}" -X DELETE https://capstoneudacityproject.herokuapp.com/movies/5
+      curl https://capstoneudacityproject.herokuapp.com/author
 
         {
-          "success": true
+        "authors": [
+            {
+                "books": [3],
+                "id": 2,
+                "name": "Mohamed Aly"
+            },
+            {
+                "books": [4,6,8],
+                "id": 3,
+                "name": "Mohamed Aly"
+            }]
         }
 
-##### POST /movies
+##### GET /user
 
-      1. Adds a new movie to the movies list.
-      2. Returns a newly created Id and success value.
+      Return a list of Users by User role authorization.
+      data:
+        User id,
+        User age,
+        User name,
+        list of Books id which mark as read by this User
 
 ###### Sample
 
-      curl -d '{"title":"Movie1", "release_date":"05-22-2019"}'
+      curl -H "Authorization: Bearer ${user_token}" https://capstoneudacityproject.herokuapp.com/user
+
+        {
+        "users": [
+            {
+                "age": 19,
+                "book_read": [3,8],
+                "id": 4,
+                "name": "Shafee"
+            },
+            {
+                "age": 19,
+                "book_read": [],
+                "id": 5,
+                "name": "Yousif"
+            }]
+        }
+
+##### GET /user/{user_id}
+
+      Return User by User id and User role authorization.
+      data:
+        User id,
+        User age,
+        User name,
+        list of Books id which mark as read by this User
+
+###### Sample
+
+      curl -H "Authorization: Bearer ${user_token}" https://capstoneudacityproject.herokuapp.com/user/{user_id}
+
+        {
+        "user": {
+            "age": 19,
+            "book_read": [3,8],
+            "id": 4,
+            "name": "Shafee"
+            }
+        }
+
+##### POST /user/create
+
+      Create new User by User role authorization.
+      Return data of new user.
+      
+      required data:
+        User age,
+        User name,
+        [optional] list of Books id which mark as read by this User
+
+###### Sample
+
+      curl -d '{"name":"Ahmed Khalifa","book":[1],"age": 19}'
       -H "Content-Type: application/json"
-      -H "Authorization: Bearer ${auth_token_cast_asst}"
-      -X POST https://capstoneudacityproject.herokuapp.com/movies
-
-      {
-        "new id":8,
-        "success":true
-      }
-
-##### PATCH /movies/{movie_id}
-
-      1. Updates a movie data based on given id.
-      2. Returns success value.
-
-###### Sample
-      curl -d '{"title":"Movie2", "release_date":"02/22/2017"}' -H "Content-Type: application/json" -H "Authorization: Bearer ${auth_token_cast_asst}" -X PATCH https://capstoneudacityproject.herokuapp.com/movies/2
-
-      {
-        "success":true
-      }
-
-##### GET /actors
-
-    1. Returns a list of actors, success value and total actors.
-    <!-- 2. Results are also paginated. -->
-
-###### Sample:
-      curl -H "Authorization: Bearer ${auth_token_cast_asst}" https://capstoneudacityproject.herokuapp.com/actors
-
-      {
-        "actors":
-          [
-            {
-              "age":24,
-              "gender":"F",
-              "id":1,
-              "name":"Actor 1"
-            },
-            {
-              "age":24,
-              "gender":"F",
-              "id":2,
-              "name":"Actor 1"
-            },
-            {
-              "age":24,
-              "gender":"F",
-              "id":3,
-              "name":"Actor 1"
-            },
-            {
-              "age":24,
-              "gender":"F",
-              "id":4,
-              "name":"Actor 1"
-            },
-            {
-              "age":24,
-              "gender":"F",
-              "id":5,
-              "name":"Actor 1"
-            },
-            {
-              "age":24,
-              "gender":"F",
-              "id":6,
-              "name":"Actor 1"
-            }
-          ],
-        "success":true,
-        "total_actors":6
-      }
-
-
-##### POST /actors
-
-      1. Adds a new actor to the actors list.
-      2. Returns a newly created Id and a success value.
-
-###### Sample
-         curl -d '{"name":"Actor 1", "age":"24", "gender":"F"}' -H "Content-Type: application/json" -H "Authorization: Bearer ${auth_token_cast_asst}" -X POST https://capstoneudacityproject.herokuapp.com/actors
+      -H "Authorization: Bearer ${user_token}"
+      -X POST https://capstoneudacityproject.herokuapp.com/user/create
 
         {
-          "new id":9,
-          "success":true
+         "user": {
+            "age": 19,
+            "book_read": [1],
+            "id": 4,
+            "name": "Ahmed Khalifa"
+            }
         }
 
-##### DELETE /actors/{actor_id}
+##### POST /author/create
 
-      1. Deletes an actor of the given id.
-      2. Returns the success value.
+      Create new Author by Author role authorization.
+      Return data of new Author.
+      
+      required data:
+        Author name,
+        [optional] list of Books id which authored by this Author.
+
+###### Sample
+
+      curl -d '{"name":"Jhon","book":[1]}'
+      -H "Content-Type: application/json"
+      -H "Authorization: Bearer ${author_token}"
+      -X POST https://capstoneudacityproject.herokuapp.com/author/create
+
+        {
+         "author": {
+            "books": [1],
+            "id": 13,
+            "name": "Jhon"
+            }
+        }
+
+
+##### POST /book/create
+
+      Create new Book by Author role authorization.
+      Return data of new Book.
+      
+      required data:
+        Book name,
+        number of Book pages,
+        Author id who write this Book
 
 ###### Sample
 
-      curl -H "Authorization: Bearer ${auth_token_cast_asst}" -X DELETE https://capstoneudacityproject.herokuapp.com/actors/5
+      curl -d '{"name": "Finaly","pages": 200,"author":4}'
+      -H "Content-Type: application/json"
+      -H "Authorization: Bearer ${author_token}"
+      -X POST https://capstoneudacityproject.herokuapp.com/book/create
 
-      {
-        "success": true
-      }
+        {
+         "book": {
+            "author": 4,
+            "id": 11,
+            "name": "Finaly",
+            "pages": 200,
+            "reader": []
+            }
+        }
 
-##### PATCH /actors/{actor_id}
+##### PATCH /user/{user_id}/book_read
 
-      1. Updates an actors data based on given id.
-      2. Returns updated actor information and success value.
+      Add new Book as read in User data by User role authorization.
+      Return data of User.
+      
+      required data:
+        List of Books id which want to add it as read
+    
+      Note: this endpoint to only add books as read in user data,
+          so the previous Books will still mark as read and can't delete it from user data.
 
 ###### Sample
-        curl -d '{"name":"Actor 1 F", "age":"24", "gender":"F"}'
-        -H "Content-Type: application/json"
-        -H "Authorization: Bearer ${auth_token_cast_asst}"
-        -X PATCH https://capstoneudacityproject.herokuapp.com/actors/2
 
-          {
-            "updateActor":
-            {
-              "age":24,
-              "gender":"F",
-              "id":2,
-              "name":"Actor 1 F"
-            },
-            "success":true
-          }
+      curl -d '{"book_read": [3]}'
+      -H "Content-Type: application/json"
+      -H "Authorization: Bearer ${user_token}"
+      -X POST https://capstoneudacityproject.herokuapp.com/user/{user_id}/book_read
+
+        {
+            "user": {
+                "age": 19,
+                "book_read": [3,8],
+                "id": 4,
+                "name": "Shafee"
+            }
+        }
+
+
+##### DELETE /user/{user_id}/delete
+
+      Delete User data by User id and User role authorization.
+      Return Success message.
+
+###### Sample
+
+      curl -H "Authorization: Bearer ${user_token}"
+      -X POST https://capstoneudacityproject.herokuapp.com/user/{user_id}/delete
+
+        {"Success": True}
+
+##### DELETE /author/{author_id}/delete
+
+      Delete Author and his Books data by Author id and Author role authorization.
+      Return Success message.
+
+###### Sample
+
+      curl -H "Authorization: Bearer ${author_token}"
+      -X POST https://capstoneudacityproject.herokuapp.com/author/{author_id}/delete
+
+        {"Success": True}
