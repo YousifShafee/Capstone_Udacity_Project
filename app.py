@@ -15,8 +15,7 @@ def create_app(test_config=None):
     CORS(app)
 
     @app.route('/book', methods=['GET'])
-    @requires_auth('read:book')
-    def get_books(payload):
+    def get_books():
         try:
             data = Book.query.order_by('id').all()
             return jsonify({'books': data_format(data)})
@@ -24,8 +23,7 @@ def create_app(test_config=None):
             abort(422)
 
     @app.route('/author', methods=['GET'])
-    @requires_auth('get:author')
-    def get_author(payload):
+    def get_author():
         try:
             data = Author.query.order_by('id').all()
             return jsonify({'authors': data_format(data)})

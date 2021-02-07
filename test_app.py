@@ -64,13 +64,13 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertTrue(data['user'])
 
     def test_get_book(self):
-        res = self.client().get('/book', headers=self.author_jwt)
+        res = self.client().get('/book')
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data['books'])
 
     def test_get_author(self):
-        res = self.client().get('/author', headers=self.author_jwt)
+        res = self.client().get('/author')
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
         self.assertTrue(data['authors'])
@@ -128,12 +128,6 @@ class CapstoneTestCase(unittest.TestCase):
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 422)
         self.assertTrue(data['error'])
-
-    def test_error_get_book(self):
-        res = self.client().get('/book')
-        data = json.loads(res.data)
-        self.assertEqual(res.status_code, 401)
-        self.assertTrue(data['code'])
 
     def test_error_get_spec_user(self):
         res = self.client().get('/user/1000', headers=self.user_jwt)
